@@ -1,7 +1,9 @@
 var express = require("express");
 var passport = require("passport");
 var OAuth2Strategy = require("passport-oauth2");
+const { decode } = require("jsonwebtoken");
 var db = require("../db");
+const fetch = require("cross-fetch");
 
 // Configure the Google strategy for use by Passport.
 //
@@ -13,43 +15,61 @@ var db = require("../db");
 
 const KEYP_APP_DOMAIN =
   process.env.KEYP_APP_DOMAIN || "https://app.usekeyp.com";
+
 const APP_DOMAIN = process.env.APP_DOMAIN || "http://localhost:3000";
+
 passport.use(
   new OAuth2Strategy(
     {
-      authorizationURL: `${KEYP_APP_DOMAIN}/oauth2/auth`,
-      tokenURL: `${KEYP_APP_DOMAIN}/oauth2/auth`,
+      authorizationURL: `${KEYP_APP_DOMAIN}/oauth/auth`,
+      tokenURL: `${KEYP_APP_DOMAIN}/oauth/token`,
       clientID: process.env.KEYP_CLIENT_ID,
-      callbackURL: `${APP_DOMAIN}/auth/example/callback`,
-      scope: ["profile", "email"],
+      callbackURL: `${APP_DOMAIN}/redirect/keyp`,
+      scope: ["openid", "email"],
+      state: true,
+      pkce: true,
+      responseType: "",
+      // passReqToCallback: true, // adds req to beginning of verify() function
     },
-    function verify(accessToken, refreshToken, profile, cb) {
+    async (accessToken, _refreshToken, params, _profile, cb) => {
+      const id_token = decode(params.id_token);
+
+      const userDetails = await fetch(`${KEYP_APP_DOMAIN}/oauth/me`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }).then((res) => {
+        if (res.status != 200)
+          cb(new Error("KEYP authorization failed, or secret invalid"));
+        return res.json();
+      });
+
       db.get(
-        "SELECT * FROM federated_credentials WHERE provider = ? AND subject = ?",
-        [issuer, profile.id],
+        "SELECT * FROM federated_credentials WHERE provider = ? AND user_id = ?",
+        [id_token.iss, userDetails.sub],
         function (err, row) {
           if (err) {
             return cb(err);
           }
+          console.log({ row });
           if (!row) {
             db.run(
-              "INSERT INTO users (name) VALUES (?)",
-              [profile.displayName],
+              "INSERT INTO users (id, email, access_token) VALUES (?, ?, ?)",
+              [userDetails.sub, userDetails.email, userDetails.accessToken],
               function (err) {
                 if (err) {
                   return cb(err);
                 }
                 var id = this.lastID;
                 db.run(
-                  "INSERT INTO federated_credentials (user_id, provider, subject) VALUES (?, ?, ?)",
-                  [id, issuer, profile.id],
+                  "INSERT INTO federated_credentials (user_id, provider) VALUES (?, ?)",
+                  [userDetails.sub, id_token.iss],
                   function (err) {
                     if (err) {
                       return cb(err);
                     }
                     var user = {
                       id: id,
-                      name: profile.displayName,
+                      name: id_token.sub,
+                      accessToken,
                     };
                     return cb(null, user);
                   }
@@ -93,6 +113,7 @@ passport.serializeUser(function (user, cb) {
 });
 
 passport.deserializeUser(function (user, cb) {
+  console.log(user);
   process.nextTick(function () {
     return cb(null, user);
   });
@@ -124,7 +145,7 @@ router.get("/login", function (req, res, next) {
  * Once Google has completed their interaction with the user, the user will be
  * redirected back to the app at `GET /oauth2/redirect/accounts.google.com`.
  */
-router.get("/login/keyp", passport.authenticate("google"));
+router.get("/login/keyp", passport.authenticate("oauth2"));
 
 /*
     This route completes the authentication sequence when Google redirects the
@@ -133,8 +154,8 @@ router.get("/login/keyp", passport.authenticate("google"));
     user returns, they are signed in to their linked account.
 */
 router.get(
-  "/oauth2/redirect/keyp",
-  passport.authenticate("google", {
+  "/redirect/keyp",
+  passport.authenticate("oauth2", {
     successReturnToOrRedirect: "/",
     failureRedirect: "/login",
   })

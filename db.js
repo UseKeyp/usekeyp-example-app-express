@@ -8,30 +8,25 @@ var db = new sqlite3.Database("./var/db/todos.db");
 db.serialize(function () {
   db.run(
     "CREATE TABLE IF NOT EXISTS users ( \
-    id INTEGER PRIMARY KEY, \
-    username TEXT UNIQUE, \
-    hashed_password BLOB, \
-    salt BLOB, \
-    name TEXT \
-    accessToken TEXT \
-    refreshToken TEXT \
-  )"
+    id TEXT PRIMARY KEY, \
+    access_token TEXT, \
+    email TEXT \
+    )"
   );
 
   db.run(
     "CREATE TABLE IF NOT EXISTS federated_credentials ( \
     id INTEGER PRIMARY KEY, \
-    user_id INTEGER NOT NULL, \
+    user_id TEXT NOT NULL, \
     provider TEXT NOT NULL, \
-    subject TEXT NOT NULL, \
-    UNIQUE (provider, subject) \
-  )"
+    UNIQUE (provider, user_id) \
+    )"
   );
 
   db.run(
     "CREATE TABLE IF NOT EXISTS todos ( \
     id INTEGER PRIMARY KEY, \
-    owner_id INTEGER NOT NULL, \
+    owner_id TEXT NOT NULL, \
     title TEXT NOT NULL, \
     completed INTEGER \
   )"

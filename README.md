@@ -17,7 +17,7 @@ $ npm install
 This app requires OAuth 2.0 credentials from Google, which can be obtained by
 [setting up](https://developers.google.com/identity/protocols/oauth2/openid-connect#appsetup)
 a project in [Google API console](https://console.developers.google.com/apis/).
-The redirect URI of the OAuth client should be set to `'http://localhost:3000/oauth2/redirect/google'`.
+The redirect URI of the OAuth client should be set to `'http://localhost:3000/auth/keyp/callback'`.
 
 Once credentials have been obtained, create a `.env` file and add the following
 environment variables:
@@ -47,36 +47,36 @@ Express, Passport, and the [`passport-google-oidc`](https://www.passportjs.org/p
 strategy.
 
 This app is a traditional web application, in which application logic and data
-persistence resides on the server.  HTML pages and forms are rendered by the
+persistence resides on the server. HTML pages and forms are rendered by the
 server and client-side JavaScript is not utilized (or kept to a minimum).
 
-This app is built using the Express web framework.  Data is persisted to a
-[SQLite](https://www.sqlite.org/) database.  HTML pages are rendered using [EJS](https://ejs.co/)
+This app is built using the Express web framework. Data is persisted to a
+[SQLite](https://www.sqlite.org/) database. HTML pages are rendered using [EJS](https://ejs.co/)
 templates, and are styled using vanilla CSS.
 
-When a user first arrives at this app, they are prompted to sign in.  To sign
-in, the user is redirected to Google using OpenID Connect.  Once authenticated,
+When a user first arrives at this app, they are prompted to sign in. To sign
+in, the user is redirected to Google using OpenID Connect. Once authenticated,
 a login session is established and maintained between the server and the user's
 browser with a cookie.
 
-After signing in, the user can view, create, and edit todo items.  Interaction
+After signing in, the user can view, create, and edit todo items. Interaction
 occurs by clicking links and submitting forms, which trigger HTTP requests.
 The browser automatically includes the cookie set during login with each of
 these requests.
 
 When the server receives a request, it authenticates the cookie and restores the
-login session, thus authenticating the user.  It then accesses or stores records
+login session, thus authenticating the user. It then accesses or stores records
 in the database associated with the authenticated user.
 
 ## Next Steps
 
-* Add additional social login providers.
+- Add additional social login providers.
 
   Study [todos-express-social](https://github.com/passport/todos-express-social)
   to learn how to add multiple providers, giving users the choice of which
   social network account to use when signing in.
 
-* Add passwordless.
+- Add passwordless.
 
   Study [todos-express-webauthn](https://github.com/passport/todos-express-webauthn)
   to learn how to let users sign in with biometrics or a security key.
