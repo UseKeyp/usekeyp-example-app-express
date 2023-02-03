@@ -28,8 +28,6 @@ passport.use(
       scope: ["openid", "email"],
       state: true,
       pkce: true,
-      responseType: "",
-      // passReqToCallback: true, // adds req to beginning of verify() function
     },
     async (accessToken, _refreshToken, params, _profile, cb) => {
       const id_token = decode(params.id_token);
@@ -49,11 +47,10 @@ passport.use(
           if (err) {
             return cb(err);
           }
-          console.log({ row });
           if (!row) {
             db.run(
               "INSERT INTO users (id, email, access_token) VALUES (?, ?, ?)",
-              [userDetails.sub, userDetails.email, userDetails.accessToken],
+              [userDetails.sub, userDetails.email, accessToken],
               function (err) {
                 if (err) {
                   return cb(err);
@@ -77,17 +74,27 @@ passport.use(
               }
             );
           } else {
-            db.get(
-              "SELECT * FROM users WHERE id = ?",
-              [row.user_id],
-              function (err, row) {
+            // Update the user's email and access token
+            db.run(
+              "UPDATE users SET email = ?, access_token = ? WHERE id = ?",
+              [userDetails.email, accessToken, userDetails.sub],
+              function (err) {
                 if (err) {
                   return cb(err);
                 }
-                if (!row) {
-                  return cb(null, false);
-                }
-                return cb(null, row);
+                db.get(
+                  "SELECT * FROM users WHERE id = ?",
+                  [row.user_id],
+                  function (err, row) {
+                    if (err) {
+                      return cb(err);
+                    }
+                    if (!row) {
+                      return cb(null, false);
+                    }
+                    return cb(null, row);
+                  }
+                );
               }
             );
           }
@@ -107,13 +114,18 @@ passport.use(
 // example does not have a database, the complete Facebook profile is serialized
 // and deserialized.
 passport.serializeUser(function (user, cb) {
+  console.log(user);
   process.nextTick(function () {
-    cb(null, { id: user.id, username: user.username, name: user.name });
+    cb(null, {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      access_token: user.access_token,
+    });
   });
 });
 
 passport.deserializeUser(function (user, cb) {
-  console.log(user);
   process.nextTick(function () {
     return cb(null, user);
   });
