@@ -5,7 +5,7 @@ const { decode } = require("jsonwebtoken");
 var db = require("../db");
 const fetch = require("cross-fetch");
 
-// Configure the Keyp strategy for use by Passport.js
+// Configure Keyp for use by Passport.js
 //
 // OAuth 2.0-based strategies require a `verify` function which receives the
 // credential (`accessToken`) for accessing the Facebook API on the user's

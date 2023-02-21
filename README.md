@@ -37,8 +37,7 @@ Navigate to [`http://localhost:3000`](http://localhost:3000).
 ## Overview
 
 This app illustrates how to build a todo app with sign in functionality using
-Express, Passport, and the [`Keyp`](https://www.usekeyp.com/)
-strategy.
+Express, Passport, and [`Keyp`](https://www.usekeyp.com/)
 
 This app is a traditional web application, in which application logic and data
 persistence resides on the server. HTML pages and forms are rendered by the
