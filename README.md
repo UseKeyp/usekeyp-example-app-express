@@ -1,50 +1,53 @@
-# todos-express-google
+<h1 align="center"><img width="600" style="border-radius: 30px;" src="https://raw.githubusercontent.com/UseKeyp/.github/main/Keyp-Logo-Color.svg"/></h1>
+<h1 align="center">Welcome to usekeyp-example-app-express 👋</h1>
+<p align="center">
+  <a href="#" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg" />
+  </a>
+  <a href="https://twitter.com/UseKeyp" target="_blank">
+    <img alt="Twitter: UseKeyp" src="https://img.shields.io/twitter/follow/UseKeyp.svg?style=social" />
+  </a>
+</p>
 
-This app illustrates how to use [Passport](https://www.passportjs.org/) with
-[Express](https://expressjs.com/) to sign users in with [Google](https://www.google.com/).
+> Example express app using passport.js to authenticate with OAuth2.0
+
+This app illustrates how to use [Passport.js](https://www.passportjs.org/) with
+[Express](https://expressjs.com/) to sign users in with [Keyp](https://www.usekeyp.com/).
 Use this example as a starting point for your own web applications.
 
-## Quick Start
+## Usage 📖
 
 To run this app, clone the repository and install dependencies:
 
 ```bash
-$ git clone https://github.com/passport/todos-express-google.git
-$ cd todos-express-google
-$ npm install
+$ git clone https://github.com/UseKeyp/usekeyp-example-app-express.git
+$ yarn 
 ```
 
-This app requires OAuth 2.0 credentials from Google, which can be obtained by
-[setting up](https://developers.google.com/identity/protocols/oauth2/openid-connect#appsetup)
-a project in [Google API console](https://console.developers.google.com/apis/).
-The redirect URI of the OAuth client should be set to `'http://localhost:3000/auth/keyp/callback'`.
+This app requires OAuth 2.0 credentials from Keyp, which can be obtained by
+[setting up](https://docs.usekeyp.com/oauth)
+a client in [Keyp's Developer Portal](https://dev.usekeyp.com).
+The redirect URI of the OAuth client should be set to `http://localhost:3000/redirect/keyp`.
 
 Once credentials have been obtained, create a `.env` file and add the following
 environment variables:
 
-```
-GOOGLE_CLIENT_ID=__INSERT_CLIENT_ID_HERE__
-GOOGLE_CLIENT_SECRET=__INSERT_CLIENT_SECRET_HERE__
+```bash
+KEYP_CLIENT_ID=INSERT_CLIENT_ID_HERE
 ```
 
 Start the server.
 
 ```bash
-$ npm start
+$ yarn start
 ```
 
 Navigate to [`http://localhost:3000`](http://localhost:3000).
 
-## Tutorial
-
-Follow along with the step-by-step [Sign In with Google Tutorial](https://www.passportjs.org/tutorials/google/)
-to learn how this app was built.
-
 ## Overview
 
 This app illustrates how to build a todo app with sign in functionality using
-Express, Passport, and the [`passport-google-oidc`](https://www.passportjs.org/packages/passport-google-oidc/)
-strategy.
+Express, Passport, and [`Keyp`](https://www.usekeyp.com/)
 
 This app is a traditional web application, in which application logic and data
 persistence resides on the server. HTML pages and forms are rendered by the
@@ -55,7 +58,7 @@ This app is built using the Express web framework. Data is persisted to a
 templates, and are styled using vanilla CSS.
 
 When a user first arrives at this app, they are prompted to sign in. To sign
-in, the user is redirected to Google using OpenID Connect. Once authenticated,
+in, the user is redirected to Keyp using OpenID Connect. Once authenticated,
 a login session is established and maintained between the server and the user's
 browser with a cookie.
 
@@ -70,16 +73,8 @@ in the database associated with the authenticated user.
 
 ## Next Steps
 
-- Add additional social login providers.
-
-  Study [todos-express-social](https://github.com/passport/todos-express-social)
-  to learn how to add multiple providers, giving users the choice of which
-  social network account to use when signing in.
-
-- Add passwordless.
-
-  Study [todos-express-webauthn](https://github.com/passport/todos-express-webauthn)
-  to learn how to let users sign in with biometrics or a security key.
+- Check out [Keyp's API documentation](https://docs.usekeyp.com/api) to learn
+  how to programmatically transfer tokens, conduct airdrops, access crypto⇔fiat on and off-ramps, get user token balances, and more! 
 
 ## License
 
@@ -87,4 +82,12 @@ in the database associated with the authenticated user.
 
 ## Credit
 
-Created by [Jared Hanson](https://www.jaredhanson.me/)
+Original Google OAuth & Express demo app was created by [Jared Hanson](https://www.jaredhanson.me/) and 
+adapted by [Keyp](https://www.usekeyp.com/) to use [Keyp's OAuth process](https://docs.usekeyp.com/oauth).
+
+## License 📝
+
+Copyright © 2023 Nifty Chess, Inc.<br />
+This project is MIT licensed.
+
+[sponsor-keyp]: https://UseKeyp.com
