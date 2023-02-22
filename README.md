@@ -1,10 +1,21 @@
-# todos-express-keyp
+<h1 align="center"><img width="600" style="border-radius: 30px;" src="https://raw.githubusercontent.com/UseKeyp/.github/main/Keyp-Logo-Color.svg"/></h1>
+<h1 align="center">Welcome to usekeyp-example-app-express 👋</h1>
+<p align="center">
+  <a href="#" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg" />
+  </a>
+  <a href="https://twitter.com/UseKeyp" target="_blank">
+    <img alt="Twitter: UseKeyp" src="https://img.shields.io/twitter/follow/UseKeyp.svg?style=social" />
+  </a>
+</p>
+
+> Example express app using passport.js to authenticate with OAuth2.0
 
 This app illustrates how to use [Passport.js](https://www.passportjs.org/) with
 [Express](https://expressjs.com/) to sign users in with [Keyp](https://www.usekeyp.com/).
 Use this example as a starting point for your own web applications.
 
-## Quick Start
+## Usage 📖
 
 To run this app, clone the repository and install dependencies:
 
@@ -28,7 +39,7 @@ KEYP_CLIENT_ID=INSERT_CLIENT_ID_HERE
 Start the server.
 
 ```bash
-$ npm start
+$ yarn start
 ```
 
 Navigate to [`http://localhost:3000`](http://localhost:3000).
@@ -73,3 +84,10 @@ in the database associated with the authenticated user.
 
 Original Google OAuth & Express demo app was created by [Jared Hanson](https://www.jaredhanson.me/) and 
 adapted by [Keyp](https://www.usekeyp.com/) to use [Keyp's OAuth process](https://docs.usekeyp.com/oauth).
+
+## License 📝
+
+Copyright © 2023 Nifty Chess, Inc.<br />
+This project is MIT licensed.
+
+[sponsor-keyp]: https://UseKeyp.com
