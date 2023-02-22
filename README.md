@@ -10,20 +10,19 @@ To run this app, clone the repository and install dependencies:
 
 ```bash
 $ git clone https://github.com/UseKeyp/usekeyp-example-app-express.git
-$ npm install
+$ yarn 
 ```
 
 This app requires OAuth 2.0 credentials from Keyp, which can be obtained by
 [setting up](https://docs.usekeyp.com/oauth)
 a client in [Keyp's Developer Portal](https://dev.usekeyp.com).
-The redirect URI of the OAuth client should be set to `http://localhost:3000/auth/keyp/callback`.
+The redirect URI of the OAuth client should be set to `http://localhost:3000/redirect/keyp`.
 
 Once credentials have been obtained, create a `.env` file and add the following
 environment variables:
 
-```
+```bash
 KEYP_CLIENT_ID=INSERT_CLIENT_ID_HERE
-KEYP_CLIENT_SECRET=INSERT_CLIENT_SECRET_HERE
 ```
 
 Start the server.
