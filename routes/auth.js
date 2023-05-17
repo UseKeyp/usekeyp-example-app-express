@@ -6,28 +6,26 @@ var db = require("../db");
 const fetch = require("cross-fetch");
 
 // Configure Keyp for use by Passport.js
-//
-// OAuth 2.0-based strategies require a `verify` function which receives the
-// credential (`accessToken`) for accessing the Facebook API on the user's
-// behalf, along with the user's profile.  The function must invoke `cb`
-// with a user object, which will be set at `req.user` in route handlers after
-// authentication.
 
 const KEYP_APP_DOMAIN =
   process.env.KEYP_APP_DOMAIN || "https://app.usekeyp.com";
+const KEYP_AUTHORIZATION_URL = `${KEYP_APP_DOMAIN}/oauth/auth`
+const KEYP_TOKEN_URL = `${KEYP_APP_DOMAIN}/oauth/token`
 
+// Domain where you serve the app 
 const APP_DOMAIN = process.env.APP_DOMAIN || "http://localhost:3000";
+const APP_CALLBACK_URL = `${APP_DOMAIN}/redirect/keyp`
 
 passport.use(
   new OAuth2Strategy(
     {
-      authorizationURL: `${KEYP_APP_DOMAIN}/oauth/auth`,
-      tokenURL: `${KEYP_APP_DOMAIN}/oauth/token`,
       clientID: process.env.KEYP_CLIENT_ID,
-      callbackURL: `${APP_DOMAIN}/redirect/keyp`,
       scope: ["openid", "email"],
       state: true,
       pkce: true,
+      authorizationURL: KEYP_AUTHORIZATION_URL,
+      tokenURL: KEYP_TOKEN_URL,
+      callbackURL: APP_CALLBACK_URL,
     },
     async (accessToken, _refreshToken, params, _profile, cb) => {
       const id_token = decode(params.id_token);
@@ -104,15 +102,6 @@ passport.use(
   )
 );
 
-// Configure Passport authenticated session persistence.
-//
-// In order to restore authentication state across HTTP requests, Passport needs
-// to serialize users into and deserialize users out of the session.  In a
-// production-quality application, this would typically be as simple as
-// supplying the user ID when serializing, and querying the user record by ID
-// from the database when deserializing.  However, due to the fact that this
-// example does not have a database, the complete Facebook profile is serialized
-// and deserialized.
 passport.serializeUser(function (user, cb) {
   console.log(user);
   process.nextTick(function () {
@@ -133,38 +122,12 @@ passport.deserializeUser(function (user, cb) {
 
 var router = express.Router();
 
-/* GET /login
- *
- * This route prompts the user to log in.
- *
- * The 'login' view renders an HTML page, which contain a button prompting the
- * user to sign in with Keyp.  When the user clicks this button, a request
- * will be sent to the `GET /login` route.
- */
 router.get("/login", function (req, res, next) {
   res.render("login");
 });
 
-/* GET /login/keyp
- *
- * This route redirects the user to Keyp, where they will authenticate.
- *
- * Signing in with Keyp is implemented using OAuth 2.0.  This route initiates
- * an OAuth 2.0 flow by redirecting the user to Keyp's identity server at
- * 'https://app.usekeyp.com'.  Once there, Keyp will authenticate the user
- * and obtain their consent to release identity information to this app.
- *
- * Once Keyp has completed their interaction with the user, the user will be
- * redirected back to the app at `GET /redirect/keyp`.
- */
 router.get("/login/keyp", passport.authenticate("oauth2"));
 
-/*
-    This route completes the authentication sequence when Keyp redirects the
-    user back to the application.  When a new user signs in, a user account is
-    automatically created and their Keyp account is linked.  When an existing
-    user returns, they are signed in to their linked account.
-*/
 router.get(
   "/redirect/keyp",
   passport.authenticate("oauth2", {
@@ -173,10 +136,6 @@ router.get(
   })
 );
 
-/* POST /logout
- *
- * This route logs the user out.
- */
 router.post("/logout", function (req, res, next) {
   req.logout(function (err) {
     if (err) {
